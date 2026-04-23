@@ -1,0 +1,27 @@
+# Build results
+bin/
+obj/
+
+# NuGet packages and cache
+*.nuget.props
+*.nuget.targets
+*.nuget.dgspec.json
+project.assets.json
+project.nuget.cache
+project.packagespec.json
+
+# Rider
+rider.project.restore.info
+rider.project.model.nuget.info
+
+# .NET Core
+*.AssemblyInfo.cs
+*.GlobalUsings.g.cs
+*.AssemblyInfoInputs.cache
+.NETCoreApp,Version=*.AssemblyAttributes.cs
+*.GeneratedMSBuildEditorConfig.editorconfig
+*.assets.cache
+
+# Reference assemblies
+ref/
+refint/

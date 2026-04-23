@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://brbroiidf65sy"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_o0x32"]
+
+[node name="Explosion" type="Node3D" unique_id=1412240374]
+
+[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="." unique_id=574594485]
+sprite_frames = SubResource("SpriteFrames_o0x32")

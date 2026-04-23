@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://bfjwhp4fu1q3r"]
+
+[ext_resource type="Material" uid="uid://c4qgmjo4vffcq" path="res://Explosion/ExplosionMaterial.tres" id="1_120f5"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_rva4e"]
+angle_max = 1.0
+initial_velocity_min = 0.5
+initial_velocity_max = 1.0
+angular_velocity_max = 10.0
+gravity = Vector3(0, 0, 0)
+linear_accel_min = -1.0
+linear_accel_max = -1.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_16uck"]
+material = ExtResource("1_120f5")
+
+[node name="Explosion1" type="GPUParticles3D" unique_id=688844572]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0)
+amount = 20
+lifetime = 2.13
+one_shot = true
+explosiveness = 0.91
+randomness = 0.84
+fixed_fps = 60
+visibility_aabb = AABB(-4, -4, -4.79199, 8, 8, 8)
+process_material = SubResource("ParticleProcessMaterial_rva4e")
+draw_pass_1 = SubResource("QuadMesh_16uck")
+
+[connection signal="finished" from="." to="." method="queue_free"]

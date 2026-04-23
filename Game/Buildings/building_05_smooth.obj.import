@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://clox60w5n62w5"
+path="res://.godot/imported/building_05_smooth.obj-b4c2851b3ab8087d7c521c65d4bd01eb.mesh"
+
+[deps]
+
+files=["res://.godot/imported/building_05_smooth.obj-b4c2851b3ab8087d7c521c65d4bd01eb.mesh"]
+
+source_file="res://Buildings/building_05_smooth.obj"
+dest_files=["res://.godot/imported/building_05_smooth.obj-b4c2851b3ab8087d7c521c65d4bd01eb.mesh", "res://.godot/imported/building_05_smooth.obj-b4c2851b3ab8087d7c521c65d4bd01eb.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

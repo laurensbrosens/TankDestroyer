@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://dj3wjvy1hoqn4"]
+
+[ext_resource type="PackedScene" uid="uid://c7to5115g5ii1" path="res://tree.glb" id="1_brfkd"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_brfkd"]
+load_path = "res://.godot/imported/tree_branches.png-7e2ce0b846ac11585408b7bbaeb534b7.s3tc.ctex"
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nnvrw"]
+resource_name = "Branches"
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+cull_mode = 2
+albedo_texture = SubResource("CompressedTexture2D_brfkd")
+
+[node name="Tree" type="Node3D" unique_id=2024770665]
+
+[node name="tree" parent="." unique_id=1899831494 instance=ExtResource("1_brfkd")]
+
+[node name="Circle_005" parent="tree" index="1" unique_id=1710957700]
+surface_material_override/0 = SubResource("StandardMaterial3D_nnvrw")
+
+[editable path="tree"]

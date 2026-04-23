@@ -1,0 +1,14 @@
+﻿namespace TankDestroyer.API;
+
+public interface ITurnContext
+{
+    ITile GetTile(int y, int x);
+
+    ITank[] GetTanks();
+
+    IBullet[] GetBullets();
+    public ITank Tank { get; set; }
+    public void MoveTank(Direction direction);
+    public void RotateTurret(TurretDirection direction);
+    void Fire();
+}

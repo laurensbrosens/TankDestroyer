@@ -1,0 +1,326 @@
+[gd_scene format=3 uid="uid://g2mt4hv2mux5"]
+
+[ext_resource type="Script" uid="uid://da3rjxqkovtjh" path="res://GameNode.cs" id="1_h2yge"]
+[ext_resource type="Script" uid="uid://crx88anhjpm17" path="res://WorldNode.cs" id="1_ig7tw"]
+[ext_resource type="Script" uid="uid://c86mrhqa6hs6p" path="res://RtsCameraController.cs" id="2_0xm2m"]
+[ext_resource type="PackedScene" uid="uid://dhcuq7ltx2385" path="res://Tank.tscn" id="2_1bvp3"]
+[ext_resource type="PackedScene" uid="uid://dhnlwonhptx5o" path="res://bullet.tscn" id="3_lquwl"]
+[ext_resource type="PackedScene" uid="uid://dj3wjvy1hoqn4" path="res://tree.tscn" id="5_4c57u"]
+[ext_resource type="Texture2D" uid="uid://od3j2ld1u6fv" path="res://beach+sand.jpg" id="5_7mycd"]
+[ext_resource type="Texture2D" uid="uid://c8865nh18pvym" path="res://aerial_grass_rock_diff_1k.jpg" id="5_272bh"]
+[ext_resource type="Texture2D" uid="uid://chf88pek7hbpp" path="res://Buildings/diffuse_.jpg" id="6_dg77c"]
+[ext_resource type="Texture2D" uid="uid://cnyhypubcro6i" path="res://forrest_ground_01_diff_1k.jpg" id="7_5vw27"]
+[ext_resource type="Texture2D" uid="uid://bfa5dv88b6m2y" path="res://patterned_concrete_wall_diff_1k.jpg" id="8_kek77"]
+[ext_resource type="ArrayMesh" uid="uid://clox60w5n62w5" path="res://Buildings/building_05_smooth.obj" id="10_a6jrf"]
+[ext_resource type="Script" uid="uid://ccbjb6k5tms7f" path="res://UINode.cs" id="11_efxa6"]
+[ext_resource type="ArrayMesh" uid="uid://bguidamuojhp6" path="res://Buildings/building_08_smooth.obj" id="13_kq58d"]
+[ext_resource type="Shader" uid="uid://tvppgsis5o00" path="res://water.gdshader" id="13_vivmo"]
+
+[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_ycdy4"]
+albedo_texture = ExtResource("6_dg77c")
+texture_filter = 0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7dm0k"]
+albedo_texture = ExtResource("5_272bh")
+uv1_scale = Vector3(2, 2, 2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_7dm0k"]
+material = SubResource("StandardMaterial3D_7dm0k")
+size = Vector3(2, 1, 2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0xm2m"]
+albedo_texture = ExtResource("5_7mycd")
+uv1_triplanar = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_h2yge"]
+material = SubResource("StandardMaterial3D_0xm2m")
+size = Vector3(2, 1, 2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1bvp3"]
+albedo_texture = ExtResource("8_kek77")
+uv1_triplanar = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_1bvp3"]
+material = SubResource("StandardMaterial3D_1bvp3")
+size = Vector3(2, 1, 2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h2yge"]
+albedo_texture = ExtResource("7_5vw27")
+uv1_scale = Vector3(2, 2, 2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_lquwl"]
+material = SubResource("StandardMaterial3D_h2yge")
+size = Vector3(2, 1, 2)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2cqfq"]
+render_priority = 0
+shader = ExtResource("13_vivmo")
+shader_parameter/color1 = Color(0, 0, 1, 1)
+shader_parameter/color2 = Color(0, 0.40392157, 0.50980395, 1)
+shader_parameter/color3 = Color(0, 0, 0.5568628, 1)
+shader_parameter/x_amount = 32.0
+shader_parameter/y_amount = 32.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_yaehf"]
+material = SubResource("ShaderMaterial_2cqfq")
+size = Vector3(2, 0.75, 2)
+
+[sub_resource type="MeshLibrary" id="MeshLibrary_ig7tw"]
+item/0/name = "Box"
+item/0/mesh = SubResource("BoxMesh_7dm0k")
+item/0/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/0/mesh_cast_shadow = 1
+item/0/shapes = []
+item/0/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/0/navigation_layers = 1
+item/1/name = ""
+item/1/mesh = SubResource("BoxMesh_h2yge")
+item/1/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/1/mesh_cast_shadow = 1
+item/1/shapes = []
+item/1/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/1/navigation_layers = 1
+item/2/name = ""
+item/2/mesh = SubResource("BoxMesh_1bvp3")
+item/2/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/2/mesh_cast_shadow = 1
+item/2/shapes = []
+item/2/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/2/navigation_layers = 1
+item/3/name = ""
+item/3/mesh = SubResource("BoxMesh_lquwl")
+item/3/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/3/mesh_cast_shadow = 1
+item/3/shapes = []
+item/3/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/3/navigation_layers = 1
+item/4/name = ""
+item/4/mesh = SubResource("BoxMesh_yaehf")
+item/4/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/4/mesh_cast_shadow = 1
+item/4/shapes = []
+item/4/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/4/navigation_layers = 1
+
+[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_0xm2m"]
+ground_color = Color(0.29803923, 0.40392157, 0.6, 1)
+energy_multiplier = 2.0
+
+[sub_resource type="Sky" id="Sky_h2yge"]
+sky_material = SubResource("PhysicalSkyMaterial_0xm2m")
+
+[sub_resource type="Environment" id="Environment_1bvp3"]
+background_mode = 2
+background_energy_multiplier = 2.69
+sky = SubResource("Sky_h2yge")
+glow_enabled = true
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4c57u"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.1764706, 0.1764706, 0.1764706, 0.89411765)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_efxa6"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.14117648, 0.14117648, 0.14117648, 0.73333335)
+
+[node name="Node3D" type="Node3D" unique_id=71573495]
+
+[node name="Game" type="Node" parent="." unique_id=1041487807 node_paths=PackedStringArray("WorldNode", "TankContainer", "BulletContainer")]
+script = ExtResource("1_h2yge")
+WorldNode = NodePath("../World")
+TankScene = ExtResource("2_1bvp3")
+BulletScene = ExtResource("3_lquwl")
+TankContainer = NodePath("../Tanks")
+BulletContainer = NodePath("../Bullets")
+
+[node name="World" type="Node3D" parent="." unique_id=2112774718 node_paths=PackedStringArray("GridMap")]
+script = ExtResource("1_ig7tw")
+GridMap = NodePath("GridMap")
+TreeScene = ExtResource("5_4c57u")
+Buildings = Array[Mesh]([ExtResource("10_a6jrf"), ExtResource("13_kq58d")])
+BuildingMaterial = SubResource("ORMMaterial3D_ycdy4")
+
+[node name="GridMap" type="GridMap" parent="World" unique_id=1936877237]
+mesh_library = SubResource("MeshLibrary_ig7tw")
+
+[node name="CameraBoom" type="Node3D" parent="." unique_id=2015517649 node_paths=PackedStringArray("_elevationNode", "_cameraNode")]
+script = ExtResource("2_0xm2m")
+MovementSpeed = 20.0
+DeadZoneMouse = 2.0
+RotationSpeed = 30.0
+MouseRotationSpeed = 7.0
+MinElevationAngle = 10.0
+MaxElevationAngle = 70.0
+InvertY = true
+MinZoom = 5.0
+ZoomSpeed = 30.0
+ZoomDampening = 0.8
+PanSpeed = 1.0
+_elevationNode = NodePath("Elevation")
+_cameraNode = NodePath("Elevation/Camera3D")
+
+[node name="Elevation" type="Node3D" parent="CameraBoom" unique_id=1460684362]
+transform = Transform3D(1, 0, 0, 0, 0.49999997, 0.86602545, 0, -0.86602545, 0.49999997, 0, 0, 0)
+
+[node name="Camera3D" type="Camera3D" parent="CameraBoom/Elevation" unique_id=1153894795]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 40)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=171982270]
+environment = SubResource("Environment_1bvp3")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1455971525]
+transform = Transform3D(1, 0, 0, 0, -0.6520984, 0.7581343, 0, -0.7581343, -0.6520984, 0, 15.746038, 0)
+
+[node name="Tanks" type="Node3D" parent="." unique_id=1263456613]
+
+[node name="Bullets" type="Node3D" parent="." unique_id=49218771]
+
+[node name="Control" type="Control" parent="." unique_id=847779028 node_paths=PackedStringArray("StartButton", "PlayButton", "NextButton", "PreviousButton", "PauseButton", "MapButton", "PlayersContainer", "PlayerScoresContainer", "GameNode", "TurnSlider")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("11_efxa6")
+StartButton = NodePath("MarginContainer/PanelContainer/VBoxContainer/Button")
+PlayButton = NodePath("MarginContainer2/PanelContainer/VBoxContainer/HBoxContainer2/Button4")
+NextButton = NodePath("MarginContainer2/PanelContainer/VBoxContainer/HBoxContainer2/Button2")
+PreviousButton = NodePath("MarginContainer2/PanelContainer/VBoxContainer/HBoxContainer2/Button3")
+PauseButton = NodePath("MarginContainer2/PanelContainer/VBoxContainer/HBoxContainer2/Button")
+MapButton = NodePath("MarginContainer/PanelContainer/VBoxContainer/GridContainer/OptionButton")
+PlayersContainer = NodePath("MarginContainer/PanelContainer/VBoxContainer/GridContainer2")
+PlayerScoresContainer = NodePath("MarginContainer3/PanelContainer/VBoxContainer/VBoxContainer")
+GameNode = NodePath("../Game")
+TurnSlider = NodePath("MarginContainer2/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer/HSlider")
+
+[node name="MarginContainer" type="MarginContainer" parent="Control" unique_id=356440238]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+
+[node name="PanelContainer" type="PanelContainer" parent="Control/MarginContainer" unique_id=1874807752]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_4c57u")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer/PanelContainer" unique_id=1103238768]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Control/MarginContainer/PanelContainer/VBoxContainer" unique_id=1316344554]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Nieuw spel"
+
+[node name="GridContainer" type="GridContainer" parent="Control/MarginContainer/PanelContainer/VBoxContainer" unique_id=402704475]
+layout_mode = 2
+columns = 2
+
+[node name="Label2" type="Label" parent="Control/MarginContainer/PanelContainer/VBoxContainer/GridContainer" unique_id=896918240]
+layout_mode = 2
+text = "Map"
+
+[node name="OptionButton" type="OptionButton" parent="Control/MarginContainer/PanelContainer/VBoxContainer/GridContainer" unique_id=1243506461]
+layout_mode = 2
+
+[node name="GridContainer2" type="GridContainer" parent="Control/MarginContainer/PanelContainer/VBoxContainer" unique_id=981781080]
+layout_mode = 2
+columns = 2
+
+[node name="Button" type="Button" parent="Control/MarginContainer/PanelContainer/VBoxContainer" unique_id=1333100491]
+layout_mode = 2
+text = "Start spel"
+
+[node name="MarginContainer2" type="MarginContainer" parent="Control" unique_id=1199494978]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -40.0
+offset_right = 20.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/margin_bottom = 10
+
+[node name="PanelContainer" type="PanelContainer" parent="Control/MarginContainer2" unique_id=1934402393]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_efxa6")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer2/PanelContainer" unique_id=1693851320]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/MarginContainer2/PanelContainer/VBoxContainer" unique_id=811909219]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer2/PanelContainer/VBoxContainer/HBoxContainer" unique_id=575243214]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="Control/MarginContainer2/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=1180876677]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Control/MarginContainer2/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=335558508]
+layout_mode = 2
+text = "Turns"
+horizontal_alignment = 1
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Control/MarginContainer2/PanelContainer/VBoxContainer" unique_id=873585944]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Button3" type="Button" parent="Control/MarginContainer2/PanelContainer/VBoxContainer/HBoxContainer2" unique_id=852087717]
+layout_mode = 2
+text = "|<"
+
+[node name="Button" type="Button" parent="Control/MarginContainer2/PanelContainer/VBoxContainer/HBoxContainer2" unique_id=476732048]
+layout_mode = 2
+text = "||"
+
+[node name="Button4" type="Button" parent="Control/MarginContainer2/PanelContainer/VBoxContainer/HBoxContainer2" unique_id=1306361875]
+layout_mode = 2
+text = ">"
+
+[node name="Button2" type="Button" parent="Control/MarginContainer2/PanelContainer/VBoxContainer/HBoxContainer2" unique_id=1892562541]
+layout_mode = 2
+text = ">|"
+
+[node name="MarginContainer3" type="MarginContainer" parent="Control" unique_id=690569399]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -40.0
+offset_bottom = 40.0
+grow_horizontal = 0
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+
+[node name="PanelContainer" type="PanelContainer" parent="Control/MarginContainer3" unique_id=492074990]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_4c57u")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer3/PanelContainer" unique_id=44206087]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Control/MarginContainer3/PanelContainer/VBoxContainer" unique_id=1663317888]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Players"
+
+[node name="VBoxContainer" type="GridContainer" parent="Control/MarginContainer3/PanelContainer/VBoxContainer" unique_id=1265982104]
+layout_mode = 2
+theme_override_constants/h_separation = 10
+columns = 3
