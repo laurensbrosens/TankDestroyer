@@ -129,6 +129,21 @@ content_margin_right = 5.0
 content_margin_bottom = 5.0
 bg_color = Color(0.14117648, 0.14117648, 0.14117648, 0.73333335)
 
+[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_vivmo"]
+resource_local_to_scene = true
+cull_mode = 2
+albedo_color = Color(0.3233141, 0.6692955, 0.54114324, 1)
+
+[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_2cqfq"]
+resource_local_to_scene = true
+cull_mode = 2
+albedo_color = Color(0.3233141, 0.6692955, 0.54114324, 1)
+
+[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_yaehf"]
+resource_local_to_scene = true
+cull_mode = 2
+albedo_color = Color(0.3233141, 0.6692955, 0.54114324, 1)
+
 [node name="Node3D" type="Node3D" unique_id=71573495]
 
 [node name="Game" type="Node" parent="." unique_id=1041487807 node_paths=PackedStringArray("WorldNode", "TankContainer", "BulletContainer")]
@@ -324,3 +339,23 @@ text = "Players"
 layout_mode = 2
 theme_override_constants/h_separation = 10
 columns = 3
+
+[node name="Tank" parent="." unique_id=1808783287 instance=ExtResource("2_1bvp3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.24863, 0, 0.75404143)
+ColorMaterial = SubResource("ORMMaterial3D_vivmo")
+
+[node name="Tank2" parent="." unique_id=1231024957 instance=ExtResource("2_1bvp3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.1110218, 0, 0.14972615)
+ColorMaterial = SubResource("ORMMaterial3D_2cqfq")
+
+[node name="Circle" parent="Tank2/tank" parent_id_path=PackedInt32Array(1231024957, 1836723859) index="1" unique_id=1489666128]
+surface_material_override/1 = SubResource("ORMMaterial3D_yaehf")
+
+[node name="BigFlash_01" parent="Tank2/tank/Circle" index="0" unique_id=2076730210]
+visible = false
+
+[node name="Circle" parent="Tank2" index="2" unique_id=1178597820]
+surface_material_override/1 = SubResource("ORMMaterial3D_2cqfq")
+
+[editable path="Tank2"]
+[editable path="Tank2/tank"]

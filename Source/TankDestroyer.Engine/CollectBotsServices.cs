@@ -26,7 +26,7 @@ public static class CollectBotsServices
         List<Type> allBots = new();
         var containingAssembly = typeof(IPlayerBot).Assembly;
         var typeOfPlayerBot = typeof(IPlayerBot);
-        foreach (var dllFile in Directory.GetFiles(folder, "*.dll"))
+        foreach (var dllFile in Directory.GetFiles(folder, "*.Bot.dll"))
         {
             Console.WriteLine($"Load from dll: {dllFile}");
             try

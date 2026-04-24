@@ -32,7 +32,7 @@ cull_mode = 2
 albedo_color = Color(0.8115094, 1, 0.72965014, 1)
 albedo_texture = SubResource("CompressedTexture2D_ms1bw")
 
-[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_b420v"]
+[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_4yt5b"]
 resource_local_to_scene = true
 cull_mode = 2
 albedo_color = Color(0.3233141, 0.6692955, 0.54114324, 1)
@@ -122,12 +122,12 @@ draw_pass_1 = SubResource("QuadMesh_4yt5b")
 [node name="tank" parent="." unique_id=1836723859 instance=ExtResource("4_eids8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4117726, 0)
 
-[node name="Body" parent="tank" index="0" unique_id=1788318543]
+[node name="Body" parent="tank" index="0" unique_id=267907322]
 surface_material_override/0 = SubResource("StandardMaterial3D_4yt5b")
 
-[node name="Circle" parent="tank" index="1" unique_id=1250071686]
+[node name="Circle" parent="tank" index="1" unique_id=1489666128]
 surface_material_override/0 = SubResource("StandardMaterial3D_4yt5b")
-surface_material_override/1 = SubResource("ORMMaterial3D_b420v")
+surface_material_override/1 = SubResource("ORMMaterial3D_4yt5b")
 
 [node name="BigFlash_01" parent="tank/Circle" index="0" unique_id=2076730210 instance=ExtResource("5_4yt5b")]
 transform = Transform3D(-4.371139e-07, 0, -10, 0, 10, 0, 10, 0, -4.371139e-07, 0.0069350186, 0.1072588, 2.8349352)
