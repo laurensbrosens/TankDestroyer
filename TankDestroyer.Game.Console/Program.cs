@@ -87,7 +87,10 @@ class Program
                     runner.DoTurn();
                     var lastTurn = runner.GetTurns().Last();
                     renderer.Render(lastTurn, selectedMap, playerColors, playerLabels);
-                    Thread.Sleep(1000);
+                    if (turnsToPlay > 1)
+                    {
+                        Thread.Sleep(1000);
+                    }
                 }
             }
 

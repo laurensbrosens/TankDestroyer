@@ -41,11 +41,23 @@ public class ConsoleRenderer
                 }
 
                 var bullet = turn.Bullets.FirstOrDefault(b =>
-                    (int)Math.Round((double)b.X) == x &&
-                    (int)Math.Round((double)b.Y) == y);
+                   (!b.Destroyed && b.X == x &&
+                    b.Y == y)|| (b.Destroyed && b.EndedAtX == x && b.EndedAtY == y));
                 if (bullet != null)
                 {
-                    Console.ForegroundColor = ConsoleColor.White;
+                    if(bullet.Explode)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                    }
+                    else if( bullet.Destroyed)
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkGray;    
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
+            
                     Console.Write("* ");
                     continue;
                 }
