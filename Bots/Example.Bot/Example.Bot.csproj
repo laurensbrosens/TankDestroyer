@@ -15,7 +15,6 @@
     <ItemGroup>
         <Reference Include="TankDestroyer.API">
             <HintPath>..\..\Build\TankDestroyer.API.dll</HintPath>
-            
         </Reference>
     </ItemGroup>
 
