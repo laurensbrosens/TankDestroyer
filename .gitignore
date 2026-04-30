@@ -26,3 +26,4 @@ rider.project.model.nuget.info
 ref/
 refint/
 Build/
+.vs/
