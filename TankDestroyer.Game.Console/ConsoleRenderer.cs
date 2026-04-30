@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using TankDestroyer.API;
 using TankDestroyer.Engine;
 
@@ -122,14 +118,14 @@ public class ConsoleRenderer
     {
         return direction switch
         {
-            TurretDirection.North => '↓',
-            TurretDirection.South => '↑',
-            TurretDirection.East => '←',
-            TurretDirection.West => '→',
-            TurretDirection.NorthEast => '↙',
-            TurretDirection.NorthWest => '↘',
-            TurretDirection.SouthEast => '↖',
-            TurretDirection.SouthWest => '↗',
+            TurretDirection.North => '↑',
+            TurretDirection.South => '↓',
+            TurretDirection.East => '→',
+            TurretDirection.West => '←',
+            TurretDirection.NorthWest => '\\',
+            TurretDirection.SouthEast => '\\',
+            TurretDirection.NorthEast => '/',
+            TurretDirection.SouthWest => '/',
             _ => 'O'
         };
     }

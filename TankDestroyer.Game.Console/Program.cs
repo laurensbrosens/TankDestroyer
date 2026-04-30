@@ -8,6 +8,8 @@ namespace TankDestroyer.ConsoleApp;
 class Program
 {
     public static bool AutoRun { get; set; } = true;
+    public const int GameSpeed = 500;
+
     public record Result(bool continueGame, bool win, bool draw);
 
     static void Main(string[] args)
@@ -54,7 +56,7 @@ class Program
             for (int i = 0; i < 1000; i++)
             {
                 var result = RunMatch(botTypes, maps, true);
-                if(result.win)
+                if (result.win)
                 {
                     wins++;
                 }
@@ -63,10 +65,13 @@ class Program
                     draws++;
                 }
             }
-            Console.WriteLine($"Win percentage is {((double)wins / 1000) * 100:F2}%");
-            Console.WriteLine($"Draw percentage is {((double)draws / 1000) * 100:F2}%");
-            Console.WriteLine($"Loss percentage is {((double)(1000 - wins - draws) / 1000) * 100:F2}%");
-
+            Console.WriteLine($"Win chance {((double)wins / 1000) * 100:F2}%");
+            Console.WriteLine($"Draw chance {((double)draws / 1000) * 100:F2}%");
+            Console.WriteLine(
+                $"Loss chance is {((double)(1000 - wins - draws) / 1000) * 100:F2}%"
+            );
+            Console.WriteLine($"Press any key to start game");
+            var input = Console.ReadLine();
             while (true)
             {
                 var result = RunMatch(botTypes, maps, false);
@@ -107,8 +112,11 @@ class Program
         var runner = new GameRunner(selectedMap, bots);
         var renderer = new ConsoleRenderer();
 
-        //renderer.Render(runner.GetTurns().Last(), selectedMap, playerColors, playerLabels);
-        //Thread.Sleep(1);
+        if (!autoRun)
+        {
+            renderer.Render(runner.GetTurns().Last(), selectedMap, playerColors, playerLabels);
+            Thread.Sleep(GameSpeed);
+        }
         GameTurn lastTurn = null;
         while (!runner.Finished)
         {
@@ -122,18 +130,22 @@ class Program
             {
                 runner.DoTurn();
                 lastTurn = runner.GetTurns().Last();
-                //renderer.Render(lastTurn, selectedMap, playerColors, playerLabels);
-                if (turnsToPlay > 1)
+                if (!autoRun)
                 {
-                    //Thread.Sleep(1);
+                    renderer.Render(lastTurn, selectedMap, playerColors, playerLabels);
+                }
+                if (turnsToPlay > 1 && !autoRun)
+                {
+                    Thread.Sleep(GameSpeed);
                 }
             }
         }
+        /*
         if (!autoRun)
         {
             RenderState(playerColors, playerLabels, lastTurn);
-        }
-        
+        }*/
+
         string button = string.Empty;
         if (!autoRun)
         {
@@ -141,20 +153,27 @@ class Program
         }
         var quit = button.ToLower() == "q";
         var draw = lastTurn != null && lastTurn.Tanks.All(t => t.Destroyed);
-        var win = !lastTurn.Tanks.Where(t =>
-        {
-            playerLabels.TryGetValue(t.OwnerId, out var playerName);
-            if (playerName.Contains("laurens", StringComparison.OrdinalIgnoreCase))
+        var win = !lastTurn
+            .Tanks.Where(t =>
             {
-                return true;
-            }
-            return false;
-        }).First().Destroyed;
+                playerLabels.TryGetValue(t.OwnerId, out var playerName);
+                if (playerName.Contains("laurens", StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+                return false;
+            })
+            .First()
+            .Destroyed;
 
         return new Result(!quit, win, draw);
     }
 
-    private static void RenderState(Dictionary<int, ConsoleColor> playerColors, Dictionary<int, string> playerLabels, GameTurn lastTurn)
+    private static void RenderState(
+        Dictionary<int, ConsoleColor> playerColors,
+        Dictionary<int, string> playerLabels,
+        GameTurn lastTurn
+    )
     {
         Console.ResetColor();
         Console.WriteLine($"Turn: {lastTurn?.Turn}");
@@ -171,7 +190,9 @@ class Program
 
             Console.Write($"- {label}");
             Console.ResetColor();
-            Console.WriteLine($": {tank.Health} HP{(tank.Destroyed ? " (destroyed)" : string.Empty)}");
+            Console.WriteLine(
+                $": {tank.Health} HP{(tank.Destroyed ? " (destroyed)" : string.Empty)}"
+            );
         }
         Console.WriteLine("Press a button for next game, q to quit");
     }
@@ -192,9 +213,7 @@ class Program
     {
         var value = string.IsNullOrWhiteSpace(configuredPath) ? fallback : configuredPath;
         value = value.Replace('\\', Path.DirectorySeparatorChar);
-        var path = Path.IsPathRooted(value)
-            ? value
-            : Path.GetFullPath(value);
+        var path = Path.IsPathRooted(value) ? value : Path.GetFullPath(value);
         return path;
     }
 
@@ -202,13 +221,17 @@ class Program
     {
         if (AutoRun)
         {
-            return maps.FirstOrDefault(m => m.Name.Contains("void", StringComparison.OrdinalIgnoreCase)) ?? maps[0];
+            return maps.FirstOrDefault(m =>
+                    m.Name.Contains("void", StringComparison.OrdinalIgnoreCase)
+                ) ?? maps[0];
         }
         Console.WriteLine("Select map:");
         for (var i = 0; i < maps.Count; i++)
         {
             var map = maps[i];
-            Console.WriteLine($"{i + 1}. {map.Name} ({map.Width}x{map.Height}) spawns:{map.SpawnPoints.Length}");
+            Console.WriteLine(
+                $"{i + 1}. {map.Name} ({map.Width}x{map.Height}) spawns:{map.SpawnPoints.Length}"
+            );
         }
 
         while (true)
@@ -254,7 +277,10 @@ class Program
         {
             Console.Write("Bot numbers: ");
             var input = Console.ReadLine() ?? string.Empty;
-            var parts = input.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            var parts = input.Split(
+                ',',
+                StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries
+            );
 
             var selectedIndexes = new List<int>();
             var valid = true;
@@ -295,7 +321,9 @@ class Program
         while (true)
         {
             Console.WriteLine();
-            Console.Write("Play one turn, multiple turns, or all remaining? (Enter = 1, number, A = all, Q = quit): ");
+            Console.Write(
+                "Play one turn, multiple turns, or all remaining? (Enter = 1, number, A = all, Q = quit): "
+            );
             var input = Console.ReadLine();
             if (string.IsNullOrWhiteSpace(input))
             {
@@ -317,7 +345,9 @@ class Program
                 return turns;
             }
 
-            Console.WriteLine("Invalid selection. Enter a positive number, A, Q, or press Enter for one turn.");
+            Console.WriteLine(
+                "Invalid selection. Enter a positive number, A, Q, or press Enter for one turn."
+            );
         }
     }
 
@@ -329,9 +359,26 @@ class Program
             return ConsoleColor.Gray;
         }
 
-        if (!int.TryParse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber, null, out var r) ||
-            !int.TryParse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber, null, out var g) ||
-            !int.TryParse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber, null, out var b))
+        if (
+            !int.TryParse(
+                hex.Substring(0, 2),
+                System.Globalization.NumberStyles.HexNumber,
+                null,
+                out var r
+            )
+            || !int.TryParse(
+                hex.Substring(2, 2),
+                System.Globalization.NumberStyles.HexNumber,
+                null,
+                out var g
+            )
+            || !int.TryParse(
+                hex.Substring(4, 2),
+                System.Globalization.NumberStyles.HexNumber,
+                null,
+                out var b
+            )
+        )
         {
             return ConsoleColor.Gray;
         }
@@ -353,13 +400,10 @@ class Program
             { ConsoleColor.Red, (255, 0, 0) },
             { ConsoleColor.Magenta, (255, 0, 255) },
             { ConsoleColor.Yellow, (255, 255, 0) },
-            { ConsoleColor.White, (255, 255, 255) }
+            { ConsoleColor.White, (255, 255, 255) },
         };
 
-        return palette
-            .OrderBy(entry => SquaredDistance((r, g, b), entry.Value))
-            .First()
-            .Key;
+        return palette.OrderBy(entry => SquaredDistance((r, g, b), entry.Value)).First().Key;
     }
 
     private static int SquaredDistance((int R, int G, int B) a, (int R, int G, int B) b)
