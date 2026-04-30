@@ -7,6 +7,8 @@ namespace TankDestroyer.ConsoleApp;
 
 class Program
 {
+    public static bool AutoRun { get; set; } = true;
+
     static void Main(string[] args)
     {
         Console.OutputEncoding = Encoding.UTF8;
@@ -158,6 +160,10 @@ class Program
 
     private static World SelectMap(IReadOnlyList<World> maps)
     {
+        if (AutoRun)
+        {
+            return maps.FirstOrDefault(m => m.Name.Contains("void", StringComparison.OrdinalIgnoreCase)) ?? maps[0];
+        }
         Console.WriteLine("Select map:");
         for (var i = 0; i < maps.Count; i++)
         {
@@ -180,6 +186,18 @@ class Program
 
     private static List<Type> SelectBots(IReadOnlyList<Type> botTypes, int maxBots)
     {
+        if (AutoRun)
+        {
+            return
+            [
+                botTypes.FirstOrDefault(m =>
+                    m.Name.Contains("laurens", StringComparison.OrdinalIgnoreCase)
+                ) ?? botTypes[0],
+                botTypes.FirstOrDefault(m =>
+                    m.Name.Contains("random", StringComparison.OrdinalIgnoreCase)
+                ) ?? botTypes[0],
+            ];
+        }
         Console.WriteLine();
         Console.WriteLine($"Select bots (comma-separated indexes, max {maxBots}):");
         for (var i = 0; i < botTypes.Count; i++)
@@ -230,6 +248,10 @@ class Program
 
     private static int AskTurnsToPlay()
     {
+        if (AutoRun)
+        {
+            return int.MaxValue;
+        }
         while (true)
         {
             Console.WriteLine();
