@@ -67,7 +67,7 @@ class Program
             var renderer = new ConsoleRenderer();
 
             renderer.Render(runner.GetTurns().Last(), selectedMap, playerColors, playerLabels);
-            Thread.Sleep(1000);
+            Thread.Sleep(1);
 
             while (!runner.Finished)
             {
@@ -84,7 +84,7 @@ class Program
                     renderer.Render(lastTurn, selectedMap, playerColors, playerLabels);
                     if (turnsToPlay > 1)
                     {
-                        Thread.Sleep(1000);
+                        Thread.Sleep(1);
                     }
                 }
             }
