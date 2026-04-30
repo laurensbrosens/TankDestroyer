@@ -13,9 +13,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Reference Include="TankDestroyer.API">
-			<HintPath>..\..\Build\TankDestroyer.API.dll</HintPath>
-		</Reference>
+	  <ProjectReference Include="..\..\Source\TankDestroyer.API\TankDestroyer.API.csproj" />
 	</ItemGroup>
 
 </Project>

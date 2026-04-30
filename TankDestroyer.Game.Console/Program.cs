@@ -9,6 +9,7 @@ class Program
 {
     public static bool AutoRun { get; set; } = true;
     public const int GameSpeed = 500;
+    public const int CalculationCount = 1000;
 
     public record Result(bool continueGame, bool win, bool draw);
 
@@ -53,7 +54,7 @@ class Program
 
             int wins = 0;
             int draws = 0;
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < CalculationCount; i++)
             {
                 var result = RunMatch(botTypes, maps, true);
                 if (result.win)
@@ -65,10 +66,10 @@ class Program
                     draws++;
                 }
             }
-            Console.WriteLine($"Win chance {((double)wins / 1000) * 100:F2}%");
-            Console.WriteLine($"Draw chance {((double)draws / 1000) * 100:F2}%");
+            Console.WriteLine($"Win chance {((double)wins / CalculationCount) * 100:F2}%");
+            Console.WriteLine($"Draw chance {((double)draws / CalculationCount) * 100:F2}%");
             Console.WriteLine(
-                $"Loss chance is {((double)(1000 - wins - draws) / 1000) * 100:F2}%"
+                $"Loss chance is {((double)(CalculationCount - wins - draws) / CalculationCount) * 100:F2}%"
             );
             Console.WriteLine($"Press any key to start game");
             var input = Console.ReadLine();
