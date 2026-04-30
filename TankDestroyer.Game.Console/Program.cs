@@ -46,46 +46,12 @@ class Program
                 return;
             }
 
-            var selectedMap = SelectMap(maps);
-            var selectedBotTypes = SelectBots(botTypes, selectedMap.SpawnPoints.Length);
-
-            var bots = selectedBotTypes
-                .Select(type => (IPlayerBot)Activator.CreateInstance(type)!)
-                .ToArray();
-
-            var playerColors = new Dictionary<int, ConsoleColor>();
-            var playerLabels = new Dictionary<int, string>();
-            for (var i = 0; i < selectedBotTypes.Count; i++)
+            while (true)
             {
-                var attribute = selectedBotTypes[i].GetCustomAttribute<BotAttribute>();
-                var color = attribute?.Color ?? "#808080";
-                playerColors[i] = MapHexToConsoleColor(color);
-                playerLabels[i] = attribute?.Name ?? selectedBotTypes[i].Name;
-            }
-
-            var runner = new GameRunner(selectedMap, bots);
-            var renderer = new ConsoleRenderer();
-
-            renderer.Render(runner.GetTurns().Last(), selectedMap, playerColors, playerLabels);
-            Thread.Sleep(1);
-
-            while (!runner.Finished)
-            {
-                var turnsToPlay = AskTurnsToPlay();
-                if (turnsToPlay <= 0)
+                var matchResult = RunMatch(botTypes, maps);
+                if (!matchResult)
                 {
                     break;
-                }
-
-                for (var turnIndex = 0; turnIndex < turnsToPlay && !runner.Finished; turnIndex++)
-                {
-                    runner.DoTurn();
-                    var lastTurn = runner.GetTurns().Last();
-                    renderer.Render(lastTurn, selectedMap, playerColors, playerLabels);
-                    if (turnsToPlay > 1)
-                    {
-                        Thread.Sleep(1);
-                    }
                 }
             }
 
@@ -96,6 +62,76 @@ class Program
             Console.ResetColor();
             SetCursorVisibility(true);
         }
+    }
+
+    private static bool RunMatch(Type[] botTypes, World[] maps)
+    {
+        var selectedMap = SelectMap(maps);
+        var selectedBotTypes = SelectBots(botTypes, selectedMap.SpawnPoints.Length);
+
+        var bots = selectedBotTypes
+            .Select(type => (IPlayerBot)Activator.CreateInstance(type)!)
+            .ToArray();
+
+        var playerColors = new Dictionary<int, ConsoleColor>();
+        var playerLabels = new Dictionary<int, string>();
+        for (var i = 0; i < selectedBotTypes.Count; i++)
+        {
+            var attribute = selectedBotTypes[i].GetCustomAttribute<BotAttribute>();
+            var color = attribute?.Color ?? "#808080";
+            playerColors[i] = MapHexToConsoleColor(color);
+            playerLabels[i] = attribute?.Name ?? selectedBotTypes[i].Name;
+        }
+
+        var runner = new GameRunner(selectedMap, bots);
+        var renderer = new ConsoleRenderer();
+
+        //renderer.Render(runner.GetTurns().Last(), selectedMap, playerColors, playerLabels);
+        //Thread.Sleep(1);
+        GameTurn lastTurn = null;
+        while (!runner.Finished)
+        {
+            var turnsToPlay = AskTurnsToPlay();
+            if (turnsToPlay <= 0)
+            {
+                break;
+            }
+
+            for (var turnIndex = 0; turnIndex < turnsToPlay && !runner.Finished; turnIndex++)
+            {
+                runner.DoTurn();
+                lastTurn = runner.GetTurns().Last();
+                //renderer.Render(lastTurn, selectedMap, playerColors, playerLabels);
+                if (turnsToPlay > 1)
+                {
+                    //Thread.Sleep(1);
+                }
+            }
+        }
+        Console.ResetColor();
+        Console.WriteLine($"Turn: {lastTurn?.Turn}");
+        Console.WriteLine("Health:");
+        foreach (var tank in lastTurn?.Tanks.OrderBy(t => t.OwnerId) ?? Enumerable.Empty<Tank>())
+        {
+            var label = playerLabels.TryGetValue(tank.OwnerId, out var playerName)
+                ? playerName
+                : $"Player {tank.OwnerId}";
+
+            Console.ForegroundColor = playerColors.TryGetValue(tank.OwnerId, out var color)
+                ? color
+                : ConsoleColor.Gray;
+
+            Console.Write($"- {label}");
+            Console.ResetColor();
+            Console.WriteLine($": {tank.Health} HP{(tank.Destroyed ? " (destroyed)" : string.Empty)}");
+        }
+        Console.WriteLine("Press a button for next game, q to quit");
+        var button = Console.ReadLine() ?? string.Empty;
+        if (button.ToLower() == "q")
+        {
+            return false;
+        }
+        return true;
     }
 
     private static AppConfig LoadConfig()

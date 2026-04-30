@@ -25,5 +25,5 @@ rider.project.model.nuget.info
 # Reference assemblies
 ref/
 refint/
-Build/
 .vs/
+Build/
