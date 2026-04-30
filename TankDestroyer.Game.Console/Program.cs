@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading;
 using TankDestroyer.API;
 using TankDestroyer.Engine;
 
@@ -178,10 +173,7 @@ class Program
                 }
 
                 var index = number - 1;
-                if (!selectedIndexes.Contains(index))
-                {
-                    selectedIndexes.Add(index);
-                }
+                selectedIndexes.Add(index);
             }
 
             if (!valid || selectedIndexes.Count == 0)
