@@ -16,7 +16,7 @@ public class PlayerTurnContext : ITurnContext
         _turnActions = turnActions;
     }
 
-    public IWorld World { get; set; }
+    public IWorld World => _game.World;
     public ITile GetTile(int y, int x) => World.GetTile(y, x);
     public int GetMapWidth() => World.Width;
 

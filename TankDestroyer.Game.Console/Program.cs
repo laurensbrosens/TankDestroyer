@@ -8,6 +8,7 @@ namespace TankDestroyer.ConsoleApp;
 class Program
 {
     public static bool AutoRun { get; set; } = true;
+    public record Result(bool continueGame, bool win, bool draw);
 
     static void Main(string[] args)
     {
@@ -48,10 +49,28 @@ class Program
                 return;
             }
 
+            int wins = 0;
+            int draws = 0;
+            for (int i = 0; i < 1000; i++)
+            {
+                var result = RunMatch(botTypes, maps, true);
+                if(result.win)
+                {
+                    wins++;
+                }
+                else if (result.draw)
+                {
+                    draws++;
+                }
+            }
+            Console.WriteLine($"Win percentage is {((double)wins / 1000) * 100:F2}%");
+            Console.WriteLine($"Draw percentage is {((double)draws / 1000) * 100:F2}%");
+            Console.WriteLine($"Loss percentage is {((double)(1000 - wins - draws) / 1000) * 100:F2}%");
+
             while (true)
             {
-                var matchResult = RunMatch(botTypes, maps);
-                if (!matchResult)
+                var result = RunMatch(botTypes, maps, false);
+                if (!result.continueGame)
                 {
                     break;
                 }
@@ -66,7 +85,7 @@ class Program
         }
     }
 
-    private static bool RunMatch(Type[] botTypes, World[] maps)
+    private static Result RunMatch(Type[] botTypes, World[] maps, bool autoRun)
     {
         var selectedMap = SelectMap(maps);
         var selectedBotTypes = SelectBots(botTypes, selectedMap.SpawnPoints.Length);
@@ -110,6 +129,33 @@ class Program
                 }
             }
         }
+        if (!autoRun)
+        {
+            RenderState(playerColors, playerLabels, lastTurn);
+        }
+        
+        string button = string.Empty;
+        if (!autoRun)
+        {
+            button = Console.ReadLine() ?? string.Empty;
+        }
+        var quit = button.ToLower() == "q";
+        var draw = lastTurn != null && lastTurn.Tanks.All(t => t.Destroyed);
+        var win = !lastTurn.Tanks.Where(t =>
+        {
+            playerLabels.TryGetValue(t.OwnerId, out var playerName);
+            if (playerName.Contains("laurens", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+            return false;
+        }).First().Destroyed;
+
+        return new Result(!quit, win, draw);
+    }
+
+    private static void RenderState(Dictionary<int, ConsoleColor> playerColors, Dictionary<int, string> playerLabels, GameTurn lastTurn)
+    {
         Console.ResetColor();
         Console.WriteLine($"Turn: {lastTurn?.Turn}");
         Console.WriteLine("Health:");
@@ -128,12 +174,6 @@ class Program
             Console.WriteLine($": {tank.Health} HP{(tank.Destroyed ? " (destroyed)" : string.Empty)}");
         }
         Console.WriteLine("Press a button for next game, q to quit");
-        var button = Console.ReadLine() ?? string.Empty;
-        if (button.ToLower() == "q")
-        {
-            return false;
-        }
-        return true;
     }
 
     private static AppConfig LoadConfig()
