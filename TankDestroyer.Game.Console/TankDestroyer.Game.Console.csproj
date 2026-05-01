@@ -14,6 +14,9 @@
 </PropertyGroup>
 
 <ItemGroup>
+  <ProjectReference Include="..\Bots\Example.Bot\Example.Bot.csproj" />
+  <ProjectReference Include="..\Bots\HDJO.Bot\HDJO.Bot.csproj" />
+  <ProjectReference Include="..\Bots\Laurens.Bot\Laurens.Bot.csproj" />
   <ProjectReference Include="..\Source\TankDestroyer.API\TankDestroyer.API.csproj" />
   <ProjectReference Include="..\Source\TankDestroyer.Engine\TankDestroyer.Engine.csproj" />
 </ItemGroup>

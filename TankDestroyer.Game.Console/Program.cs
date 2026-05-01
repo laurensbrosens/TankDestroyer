@@ -7,7 +7,6 @@ namespace TankDestroyer.ConsoleApp;
 
 class Program
 {
-    public static bool AutoRun { get; set; } = true;
     public const int GameSpeed = 500;
     public const int CalculationCount = 1000;
 
@@ -56,7 +55,7 @@ class Program
             int draws = 0;
             for (int i = 0; i < CalculationCount; i++)
             {
-                var result = RunMatch(botTypes, maps, true);
+                var result = RunMatch(botTypes, maps, false, true);
                 if (result.win)
                 {
                     wins++;
@@ -73,9 +72,10 @@ class Program
             );
             Console.WriteLine($"Press any key to start game");
             var input = Console.ReadLine();
+            IWorld.AutoRun = false;
             while (true)
             {
-                var result = RunMatch(botTypes, maps, false);
+                var result = RunMatch(botTypes, maps, true, true);
                 if (!result.continueGame)
                 {
                     break;
@@ -91,10 +91,10 @@ class Program
         }
     }
 
-    private static Result RunMatch(Type[] botTypes, World[] maps, bool autoRun)
+    private static Result RunMatch(Type[] botTypes, World[] maps, bool render, bool autoRun)
     {
-        var selectedMap = SelectMap(maps);
-        var selectedBotTypes = SelectBots(botTypes, selectedMap.SpawnPoints.Length);
+        var selectedMap = SelectMap(maps, autoRun);
+        var selectedBotTypes = SelectBots(botTypes, selectedMap.SpawnPoints.Length, autoRun);
 
         var bots = selectedBotTypes
             .Select(type => (IPlayerBot)Activator.CreateInstance(type)!)
@@ -113,7 +113,7 @@ class Program
         var runner = new GameRunner(selectedMap, bots);
         var renderer = new ConsoleRenderer();
 
-        if (!autoRun)
+        if (render)
         {
             renderer.Render(runner.GetTurns().Last(), selectedMap, playerColors, playerLabels);
             Thread.Sleep(GameSpeed);
@@ -121,7 +121,7 @@ class Program
         GameTurn lastTurn = null;
         while (!runner.Finished)
         {
-            var turnsToPlay = AskTurnsToPlay();
+            var turnsToPlay = AskTurnsToPlay(autoRun);
             if (turnsToPlay <= 0)
             {
                 break;
@@ -131,11 +131,11 @@ class Program
             {
                 runner.DoTurn();
                 lastTurn = runner.GetTurns().Last();
-                if (!autoRun)
+                if (render)
                 {
                     renderer.Render(lastTurn, selectedMap, playerColors, playerLabels);
                 }
-                if (turnsToPlay > 1 && !autoRun)
+                if (turnsToPlay > 1 && render)
                 {
                     Thread.Sleep(GameSpeed);
                 }
@@ -148,7 +148,7 @@ class Program
         }*/
 
         string button = string.Empty;
-        if (!autoRun)
+        if (render)
         {
             button = Console.ReadLine() ?? string.Empty;
         }
@@ -218,9 +218,9 @@ class Program
         return path;
     }
 
-    private static World SelectMap(IReadOnlyList<World> maps)
+    private static World SelectMap(IReadOnlyList<World> maps, bool autoRun)
     {
-        if (AutoRun)
+        if (autoRun)
         {
             return maps.FirstOrDefault(m =>
                     m.Name.Contains("void", StringComparison.OrdinalIgnoreCase)
@@ -248,9 +248,9 @@ class Program
         }
     }
 
-    private static List<Type> SelectBots(IReadOnlyList<Type> botTypes, int maxBots)
+    private static List<Type> SelectBots(IReadOnlyList<Type> botTypes, int maxBots, bool autoRun)
     {
-        if (AutoRun)
+        if (autoRun)
         {
             return
             [
@@ -313,9 +313,9 @@ class Program
         }
     }
 
-    private static int AskTurnsToPlay()
+    private static int AskTurnsToPlay(bool autoRun)
     {
-        if (AutoRun)
+        if (autoRun)
         {
             return int.MaxValue;
         }
