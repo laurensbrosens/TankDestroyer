@@ -7,7 +7,7 @@ namespace TankDestroyer.ConsoleApp;
 
 class Program
 {
-    public const int GameSpeed = 500;
+    public const int GameSpeed = 1000;
     public const int CalculationCount = 1000;
 
     public record Result(bool continueGame, bool win, bool draw);
@@ -158,7 +158,7 @@ class Program
             .Tanks.Where(t =>
             {
                 playerLabels.TryGetValue(t.OwnerId, out var playerName);
-                if (playerName.Contains("laurens", StringComparison.OrdinalIgnoreCase))
+                if (playerName.Contains("Laurens bot 2", StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }
@@ -255,10 +255,10 @@ class Program
             return
             [
                 botTypes.FirstOrDefault(m =>
-                    m.Name.Contains("laurens", StringComparison.OrdinalIgnoreCase)
+                    m.Name.Contains("LaurensBot", StringComparison.OrdinalIgnoreCase)
                 ) ?? botTypes[0],
                 botTypes.FirstOrDefault(m =>
-                    m.Name.Contains("random", StringComparison.OrdinalIgnoreCase)
+                    m.Name == "LaurensBot2"
                 ) ?? botTypes[0],
             ];
         }
