@@ -67,8 +67,8 @@ public class LaurensBot : IPlayerBot
         turnContext.RotateTurret(Aim(myTank, targetTank));
         if (!IWorld.AutoRun)
         {
-            Debug.WriteLine($"My Tank: ({myTank.X}, {myTank.Y})");
-            Debug.WriteLine($"Target Tank: ({targetTank.X}, {targetTank.Y})");
+            // Debug.WriteLine($"My Tank: ({myTank.X}, {myTank.Y})");
+            // Debug.WriteLine($"Target Tank: ({targetTank.X}, {targetTank.Y})");
         }
 
         if (_lastDirection == Direction.North || _lastDirection == Direction.South)
@@ -118,7 +118,7 @@ public class LaurensBot : IPlayerBot
 
         if (!IWorld.AutoRun)
         {
-            Debug.WriteLine($"My Tankmoved: ({_lastDirection})");
+            // Debug.WriteLine($"My Tankmoved: ({_lastDirection})");
         }
         turnContext.Fire();
     }

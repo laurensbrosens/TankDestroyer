@@ -51,8 +51,8 @@ public class LaurensBot2 : IPlayerBot
 
     public HashSet<(int x, int y)> GetBulletPath((int x, int y) pos, TurretDirection dir)
     {
-        int dx = (dir.HasFlag(TurretDirection.East) ? 1 : 0) + (dir.HasFlag(TurretDirection.West) ? -1 : 0);
-        int dy = (dir.HasFlag(TurretDirection.North) ? -1 : 0) + (dir.HasFlag(TurretDirection.South) ? 1 : 0);
+        int dx = (dir.HasFlag(TurretDirection.West) ? 1 : 0) + (dir.HasFlag(TurretDirection.East) ? -1 : 0);
+        int dy = (dir.HasFlag(TurretDirection.South) ? -1 : 0) + (dir.HasFlag(TurretDirection.North) ? 1 : 0);
 
         var path = new HashSet<(int x, int y)>();
         for (int i = 0; i < 7; i++)
@@ -62,6 +62,19 @@ public class LaurensBot2 : IPlayerBot
 
     public void Defend()
     {
+        if (!IWorld.AutoRun)
+        {
+            Debug.WriteLine($"MyTank x:{_myTank.X}, y: {_myTank.Y}");
+            foreach (var bullet in _currentContext.GetBullets())
+            {
+                if (bullet.Direction == TurretDirection.North)
+                {
+                    Debug.WriteLine($"Bullet x:{bullet.X}, y: {bullet.Y} {bullet.Direction}");
+                }
+            }
+            Debug.WriteLine("\n");
+        }
+
         // Move out of fire zone existing tanks if possible
         // Move out of zones where existing bullets are travelling if possible
         HashSet<(int, int)> dangerZone = [];
@@ -240,8 +253,8 @@ public class LaurensBot2 : IPlayerBot
 
         if (!IWorld.AutoRun)
         {
-            Debug.WriteLine($"My Tank: ({myTank.X}, {myTank.Y})");
-            Debug.WriteLine($"Target Tank: ({_targetTank.X}, {_targetTank.Y})");
+            // Debug.WriteLine($"My Tank: ({myTank.X}, {myTank.Y})");
+            // Debug.WriteLine($"Target Tank: ({_targetTank.X}, {_targetTank.Y})");
         }
 
         if (_targetTank != null)
@@ -252,7 +265,7 @@ public class LaurensBot2 : IPlayerBot
 
         if (!IWorld.AutoRun)
         {
-            Debug.WriteLine($"My Tankmoved: ({_lastDirection})");
+            // Debug.WriteLine($"My Tankmoved: ({_lastDirection})");
         }
 
         turnContext.Fire();
