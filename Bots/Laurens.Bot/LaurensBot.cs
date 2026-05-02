@@ -1,12 +1,10 @@
-﻿using System.Diagnostics;
-using TankDestroyer.API;
+﻿using TankDestroyer.API;
 
 namespace HDJO.Bot;
 
 [Bot("Laurens bot", "Laurens", "FFFFFF")]
 public class LaurensBot : IPlayerBot
 {
-    private Random _random = new();
     private Direction _lastDirection = Direction.North;
     private ITurnContext _currentContext = null!;
 
@@ -54,10 +52,6 @@ public class LaurensBot : IPlayerBot
     public void DoTurn(ITurnContext turnContext)
     {
         _currentContext = turnContext;
-        var enumValues = Enum.GetValues<TurretDirection>();
-        var enumDirectionValues = Enum.GetValues<Direction>();
-
-        // turnContext.RotateTurret(enumValues[_random.Next(0, enumDirectionValues.Length)]);
         var test = turnContext.GetMapHeight();
         var test2 = turnContext.GetMapWidth();
 
@@ -65,11 +59,6 @@ public class LaurensBot : IPlayerBot
         var targetTank = turnContext.GetTanks().FirstOrDefault(t => t != myTank);
 
         turnContext.RotateTurret(Aim(myTank, targetTank));
-        if (!IWorld.AutoRun)
-        {
-            // Debug.WriteLine($"My Tank: ({myTank.X}, {myTank.Y})");
-            // Debug.WriteLine($"Target Tank: ({targetTank.X}, {targetTank.Y})");
-        }
 
         if (_lastDirection == Direction.North || _lastDirection == Direction.South)
         {
@@ -116,10 +105,6 @@ public class LaurensBot : IPlayerBot
             }
         }
 
-        if (!IWorld.AutoRun)
-        {
-            // Debug.WriteLine($"My Tankmoved: ({_lastDirection})");
-        }
         turnContext.Fire();
     }
 }

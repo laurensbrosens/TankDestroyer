@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using TankDestroyer.API;
+﻿using TankDestroyer.API;
 
 namespace HDJO.Bot;
 
@@ -62,19 +61,6 @@ public class LaurensBot2 : IPlayerBot
 
     public void Defend()
     {
-        if (!IWorld.AutoRun)
-        {
-            Debug.WriteLine($"MyTank x:{_myTank.X}, y: {_myTank.Y}");
-            foreach (var bullet in _currentContext.GetBullets())
-            {
-                if (bullet.Direction == TurretDirection.North)
-                {
-                    Debug.WriteLine($"Bullet x:{bullet.X}, y: {bullet.Y} {bullet.Direction}");
-                }
-            }
-            Debug.WriteLine("\n");
-        }
-
         // Move out of fire zone existing tanks if possible
         // Move out of zones where existing bullets are travelling if possible
         HashSet<(int, int)> dangerZone = [];
@@ -120,11 +106,6 @@ public class LaurensBot2 : IPlayerBot
         {
             MoveTo(safeMoves.First());
             return;
-        }
-        else if (safeMoves.Count == 0)
-        {
-            // No safe moves, attack?
-            var test = 1;
         }
         safeMoves.ExceptWith(dangerZone);
         if (safeMoves.Count == 1)
@@ -251,22 +232,7 @@ public class LaurensBot2 : IPlayerBot
 
         turnContext.RotateTurret(Aim(myTank, _targetTank));
 
-        if (!IWorld.AutoRun)
-        {
-            // Debug.WriteLine($"My Tank: ({myTank.X}, {myTank.Y})");
-            // Debug.WriteLine($"Target Tank: ({_targetTank.X}, {_targetTank.Y})");
-        }
-
-        if (_targetTank != null)
-        {
-            // MoveTo((targetTank.X, targetTank.Y));
-        }
         Defend();
-
-        if (!IWorld.AutoRun)
-        {
-            // Debug.WriteLine($"My Tankmoved: ({_lastDirection})");
-        }
 
         turnContext.Fire();
     }
