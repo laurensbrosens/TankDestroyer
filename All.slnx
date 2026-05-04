@@ -9,6 +9,10 @@
     <Project Path="Bots/HDJO.Bot/HDJO.Bot.csproj">
       <BuildDependency Project="Source/TankDestroyer.API/TankDestroyer.API.csproj" />
     </Project>
+      <Project Path="Bots/TankYou.Bot/TankYou.Bot.csproj">
+        
+  <BuildDependency Project="Source/TankDestroyer.API/TankDestroyer.API.csproj" />
+    </Project>
     <Project Path="Bots/LISM.Bot/LISM.Bot.csproj">
           <BuildDependency Project="Source/TankDestroyer.API/TankDestroyer.API.csproj" />
     </Project>
