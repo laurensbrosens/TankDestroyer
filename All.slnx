@@ -37,7 +37,9 @@
     <Project Path="Bots/LISM.Bot/LISM.Bot.csproj">
           <BuildDependency Project="Source/TankDestroyer.API/TankDestroyer.API.csproj" />
     </Project>
-    <Project Path="Bots/Kotiba.Bot/Kotiba.Bot.csproj" />
+    <Project Path="Bots/Kotiba.Bot/Kotiba.Bot.csproj">
+         <BuildDependency Project="Source/TankDestroyer.API/TankDestroyer.API.csproj" />
+    </Project>
     <Project Path="Bots/Laurens.Bot/Laurens.Bot.csproj">
       <BuildDependency Project="Source/TankDestroyer.API/TankDestroyer.API.csproj" />
     </Project>
