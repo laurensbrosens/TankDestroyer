@@ -1,10 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+using Spectre.Console;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
-using System.Threading;
 using TankDestroyer.API;
 using TankDestroyer.Engine;
 
@@ -12,14 +9,15 @@ namespace TankDestroyer.ConsoleApp;
 
 class Program
 {
-    static void Main(string[] args)
+    static async Task Main(string[] args)
     {
         Console.OutputEncoding = Encoding.UTF8;
-        SetCursorVisibility(false);
+        AnsiConsole.Cursor.Hide();
 
         try
         {
-            ClearConsole();
+            AnsiConsole.Clear();
+            AnsiConsole.MarkupLine($"[blue]Loading application[/]");
 
             var config = LoadConfig();
             var botFolder = ResolvePath("..\\Build\\Bots", "..\\Bots");
@@ -27,29 +25,33 @@ class Program
 
             if (!Directory.Exists(botFolder))
             {
-                Console.WriteLine($"Bot folder not found: {botFolder}");
+                AnsiConsole.MarkupLine($"[red]Bot folder not found:[/] {botFolder}");
                 return;
             }
 
             if (!Directory.Exists(mapFolder))
             {
-                Console.WriteLine($"Map folder not found: {mapFolder}");
+                AnsiConsole.MarkupLine($"[red]Map folder not found:[/] {mapFolder}");
                 return;
             }
 
             var botTypes = CollectBotsServices.LoadBots(botFolder);
             if (botTypes.Length == 0)
             {
-                Console.WriteLine($"No bots found in: {botFolder}");
+                AnsiConsole.MarkupLine($"[red]No bots found in:[/] {botFolder}");
                 return;
             }
 
             var maps = CollectMapsService.LoadMaps(mapFolder);
             if (maps.Length == 0)
             {
-                Console.WriteLine($"No maps found in: {mapFolder}");
+                AnsiConsole.MarkupLine($"[red]No maps found in:[/] {mapFolder}");
                 return;
             }
+
+            AnsiConsole.MarkupLine($"\n\n[Bold]Welcome to[/]");
+            AnsiConsole.Write(new FigletText("Tank Destroyer!"));
+            await Task.Delay(2000);
 
             var selectedMap = SelectMap(maps);
             var selectedBotTypes = SelectBots(botTypes, selectedMap.SpawnPoints.Length);
@@ -58,21 +60,29 @@ class Program
                 .Select(type => (IPlayerBot)Activator.CreateInstance(type)!)
                 .ToArray();
 
-            var playerColors = new Dictionary<int, ConsoleColor>();
+            var playerColors = new Dictionary<int, Color>();
             var playerLabels = new Dictionary<int, string>();
             for (var i = 0; i < selectedBotTypes.Count; i++)
             {
                 var attribute = selectedBotTypes[i].GetCustomAttribute<BotAttribute>();
-                var color = attribute?.Color ?? "#808080";
-                playerColors[i] = MapHexToConsoleColor(color);
+                var colorHex = attribute?.Color ?? "#808080";
+                
+                if (!Color.TryFromHex(colorHex, out var color))
+                {
+                    color = Color.Grey;
+                }
+                
+                playerColors[i] = color;
                 playerLabels[i] = attribute?.Name ?? selectedBotTypes[i].Name;
             }
 
             var runner = new GameRunner(selectedMap, bots);
             var renderer = new ConsoleRenderer();
 
-            renderer.Render(runner.GetTurns().Last(), selectedMap, playerColors, playerLabels);
-            Thread.Sleep(1000);
+            GameTurn? previousTurn = null;
+            var initialTurn = runner.GetTurns().Last();
+            await renderer.AnimateTurn(initialTurn, null, selectedMap, playerColors, playerLabels);
+            previousTurn = initialTurn;
 
             while (!runner.Finished)
             {
@@ -86,20 +96,21 @@ class Program
                 {
                     runner.DoTurn();
                     var lastTurn = runner.GetTurns().Last();
-                    renderer.Render(lastTurn, selectedMap, playerColors, playerLabels);
+                    await renderer.AnimateTurn(lastTurn, previousTurn, selectedMap, playerColors, playerLabels);
+                    previousTurn = lastTurn;
+                    
                     if (turnsToPlay > 1)
                     {
-                        Thread.Sleep(1000);
+                        await Task.Delay(500);
                     }
                 }
             }
 
-            Console.WriteLine("Game Finished!");
+            AnsiConsole.MarkupLine("[bold green]Game Finished![/]");
         }
         finally
         {
-            Console.ResetColor();
-            SetCursorVisibility(true);
+            AnsiConsole.Cursor.Show();
         }
     }
 
@@ -127,180 +138,74 @@ class Program
 
     private static World SelectMap(IReadOnlyList<World> maps)
     {
-        Console.WriteLine("Select map:");
-        for (var i = 0; i < maps.Count; i++)
-        {
-            var map = maps[i];
-            Console.WriteLine($"{i + 1}. {map.Name} ({map.Width}x{map.Height}) spawns:{map.SpawnPoints.Length}");
-        }
-
-        while (true)
-        {
-            Console.Write("Map number: ");
-            var input = Console.ReadLine();
-            if (int.TryParse(input, out var number) && number >= 1 && number <= maps.Count)
-            {
-                return maps[number - 1];
-            }
-
-            Console.WriteLine("Invalid map selection.");
-        }
+        return AnsiConsole.Prompt(
+            new SelectionPrompt<World>()
+                .Title("Select [green]map[/]:")
+                .PageSize(10)
+                .AddChoices(maps)
+                .UseConverter(map => $"{map.Name} ({map.Width}x{map.Height}) spawns: {map.SpawnPoints.Length}"));
     }
 
     private static List<Type> SelectBots(IReadOnlyList<Type> botTypes, int maxBots)
     {
-        Console.WriteLine();
-        Console.WriteLine($"Select bots (comma-separated indexes, max {maxBots}):");
-        for (var i = 0; i < botTypes.Count; i++)
+        var selectedTypes = AnsiConsole.Prompt(
+            new MultiSelectionPrompt<Type>()
+                .Title($"Select [green]bots[/] (max {maxBots}):")
+                .PageSize(100)
+                .Required()
+                .InstructionsText(
+                    "[grey](Press [blue]<space>[/] to toggle a bot, " +
+                    "[green]<enter>[/] to accept)[/]")
+                .AddChoices(botTypes)
+                .UseConverter(type => {
+                    var attribute = type.GetCustomAttribute<BotAttribute>();
+                    var name = Markup.Escape(attribute?.Name ?? type.Name);
+                    var creator = Markup.Escape(attribute?.Creator ?? "Unknown");
+
+                    var colorCandidate = attribute?.Color;
+
+                    if (string.IsNullOrWhiteSpace(colorCandidate) || !Color.TryFromHex(colorCandidate, out _))
+                    {
+                        colorCandidate = GetDeterministicHexColor(name);
+                    }
+
+                    return $"[#{colorCandidate}]{name}[/] by {creator}";
+                }));
+
+        if (selectedTypes.Count > maxBots)
         {
-            var type = botTypes[i];
-            var attribute = type.GetCustomAttribute<BotAttribute>();
-            var name = attribute?.Name ?? type.Name;
-            var creator = attribute?.Creator ?? "Unknown";
-            var color = attribute?.Color ?? "#808080";
-            Console.WriteLine($"{i + 1}. {name} by {creator} [{color}]");
+            AnsiConsole.MarkupLine($"[yellow]Warning:[/] Too many bots selected. Using first {maxBots}.");
+            return selectedTypes.Take(maxBots).ToList();
         }
 
-        while (true)
-        {
-            Console.Write("Bot numbers: ");
-            var input = Console.ReadLine() ?? string.Empty;
-            var parts = input.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        return selectedTypes;
+    }
 
-            var selectedIndexes = new List<int>();
-            var valid = true;
-            foreach (var part in parts)
-            {
-                if (!int.TryParse(part, out var number) || number < 1 || number > botTypes.Count)
-                {
-                    valid = false;
-                    break;
-                }
-
-                var index = number - 1;
-                if (!selectedIndexes.Contains(index))
-                {
-                    selectedIndexes.Add(index);
-                }
-            }
-
-            if (!valid || selectedIndexes.Count == 0)
-            {
-                Console.WriteLine("Invalid bot selection.");
-                continue;
-            }
-
-            if (selectedIndexes.Count > maxBots)
-            {
-                Console.WriteLine($"Too many bots selected. This map supports {maxBots}.");
-                continue;
-            }
-
-            return selectedIndexes.Select(index => botTypes[index]).ToList();
-        }
+    static string GetDeterministicHexColor(string input)
+    {
+        var hashBytes = MD5.HashData(Encoding.UTF8.GetBytes(input));
+        // Use the first 3 bytes to create a valid RRGGBB hex color
+        return $"{hashBytes[0]:X2}{hashBytes[1]:X2}{hashBytes[2]:X2}";
     }
 
     private static int AskTurnsToPlay()
     {
-        while (true)
+        var choice = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("How many [green]turns[/] to play?")
+                .AddChoices(new[] { "1 turn", "X turns", "All remaining", "Quit" }));
+
+        switch (choice)
         {
-            Console.WriteLine();
-            Console.Write("Play one turn, multiple turns, or all remaining? (Enter = 1, number, A = all, Q = quit): ");
-            var input = Console.ReadLine();
-            if (string.IsNullOrWhiteSpace(input))
-            {
+            case "1 turn":
                 return 1;
-            }
-
-            if (string.Equals(input, "a", StringComparison.OrdinalIgnoreCase))
-            {
+            case "X turns":
+                return AnsiConsole.Ask<int>("Number of turns:");
+            case "All remaining":
                 return int.MaxValue;
-            }
-
-            if (string.Equals(input, "q", StringComparison.OrdinalIgnoreCase))
-            {
+            case "Quit":
+            default:
                 return 0;
-            }
-
-            if (int.TryParse(input, out var turns) && turns > 0)
-            {
-                return turns;
-            }
-
-            Console.WriteLine("Invalid selection. Enter a positive number, A, Q, or press Enter for one turn.");
-        }
-    }
-
-    private static ConsoleColor MapHexToConsoleColor(string color)
-    {
-        var hex = color.Trim().TrimStart('#');
-        if (hex.Length != 6)
-        {
-            return ConsoleColor.Gray;
-        }
-
-        if (!int.TryParse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber, null, out var r) ||
-            !int.TryParse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber, null, out var g) ||
-            !int.TryParse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber, null, out var b))
-        {
-            return ConsoleColor.Gray;
-        }
-
-        var palette = new Dictionary<ConsoleColor, (int R, int G, int B)>
-        {
-            { ConsoleColor.Black, (0, 0, 0) },
-            { ConsoleColor.DarkBlue, (0, 0, 128) },
-            { ConsoleColor.DarkGreen, (0, 128, 0) },
-            { ConsoleColor.DarkCyan, (0, 128, 128) },
-            { ConsoleColor.DarkRed, (128, 0, 0) },
-            { ConsoleColor.DarkMagenta, (128, 0, 128) },
-            { ConsoleColor.DarkYellow, (128, 128, 0) },
-            { ConsoleColor.Gray, (192, 192, 192) },
-            { ConsoleColor.DarkGray, (128, 128, 128) },
-            { ConsoleColor.Blue, (0, 0, 255) },
-            { ConsoleColor.Green, (0, 255, 0) },
-            { ConsoleColor.Cyan, (0, 255, 255) },
-            { ConsoleColor.Red, (255, 0, 0) },
-            { ConsoleColor.Magenta, (255, 0, 255) },
-            { ConsoleColor.Yellow, (255, 255, 0) },
-            { ConsoleColor.White, (255, 255, 255) }
-        };
-
-        return palette
-            .OrderBy(entry => SquaredDistance((r, g, b), entry.Value))
-            .First()
-            .Key;
-    }
-
-    private static int SquaredDistance((int R, int G, int B) a, (int R, int G, int B) b)
-    {
-        var dr = a.R - b.R;
-        var dg = a.G - b.G;
-        var db = a.B - b.B;
-        return dr * dr + dg * dg + db * db;
-    }
-
-    private static void SetCursorVisibility(bool visible)
-    {
-        try
-        {
-            Console.CursorVisible = visible;
-        }
-        catch (IOException)
-        {
-            // Some hosts do not support cursor visibility changes.
-        }
-    }
-
-    private static void ClearConsole()
-    {
-        try
-        {
-            Console.Clear();
-        }
-        catch (IOException)
-        {
-            // Some hosts do not support full-screen clearing.
         }
     }
 

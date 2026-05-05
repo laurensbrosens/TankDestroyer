@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+using Spectre.Console;
+using System.Reflection;
 using System.Runtime.Loader;
 using TankDestroyer.API;
 
@@ -14,7 +15,7 @@ public static class CollectBotsServices
 
     private static Assembly? ResolveFindDll(AssemblyLoadContext arg1, AssemblyName arg2)
     {
-        Console.WriteLine($"Attempting to load {arg2.FullName}");
+        AnsiConsole.MarkupLine($"Attempting to load {arg2.FullName}");
         var assembly = typeof(IPlayerBot).Assembly;
         return assembly;
     }
@@ -22,13 +23,13 @@ public static class CollectBotsServices
 
     public static Type[] LoadBots(string folder)
     {
-        Console.WriteLine($"Loading bots from: {folder}");
+        AnsiConsole.MarkupLine($"Loading bots from: [yellow]{folder}[/]");
         List<Type> allBots = new();
         var containingAssembly = typeof(IPlayerBot).Assembly;
         var typeOfPlayerBot = typeof(IPlayerBot);
         foreach (var dllFile in Directory.GetFiles(folder, "*.Bot.dll"))
         {
-            Console.WriteLine($"Load from dll: {dllFile}");
+            AnsiConsole.MarkupLine($"Load from dll: [blue]{dllFile}[/]");
             try
             {
                 var assembly = AssemblyLoadContext.GetLoadContext(typeof(CollectBotsServices).Assembly).LoadFromAssemblyPath(dllFile);
@@ -38,7 +39,7 @@ public static class CollectBotsServices
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                AnsiConsole.WriteException(e, ExceptionFormats.ShortenEverything);
                 throw;
             }
         }

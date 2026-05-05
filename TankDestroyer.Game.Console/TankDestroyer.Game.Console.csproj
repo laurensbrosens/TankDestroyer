@@ -15,6 +15,10 @@
       <HintPath>..\Build\TankDestroyer.Engine.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Spectre.Console" Version="0.55.2" />
+  </ItemGroup>
     <PropertyGroup>
         <OutputPath>..\Build</OutputPath>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>

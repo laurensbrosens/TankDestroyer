@@ -53,9 +53,6 @@
       <BuildDependency Project="Source/TankDestroyer.API/TankDestroyer.API.csproj" />
     </Project>
   </Folder>
-  <Folder Name="/Bots/Example.Bot/">
-    <Project Path="Bots/Example.Bot/LeeroyJenkins.Bot.csproj" />
-  </Folder>
   <Folder Name="/Bots/JODMO/">
     <Project Path="Bots/JODMO/JODMO.Bot.csproj" />
   </Folder>
@@ -75,6 +72,7 @@
       <BuildDependency Project="Source/TankDestroyer.API/TankDestroyer.API.csproj" />
     </Project>
   </Folder>
+  <Project Path="Bots/Example.Bot/LeeroyJenkins.Bot.csproj" />
   <Project Path="ShitBot.Bot/ShitBot.Bot.csproj" />
   <Project Path="TankDestroyer.Game.Console/TankDestroyer.Game.Console.csproj">
     <BuildDependency Project="Source/TankDestroyer.API/TankDestroyer.API.csproj" />
